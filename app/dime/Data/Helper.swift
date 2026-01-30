@@ -39,6 +39,10 @@ extension Transaction {
 
         return date ?? Date.now
     }
+    
+    var wrappedPaymentMethod: PaymentMethod {
+        PaymentMethod(rawValue: paymentMethod) ?? .cash
+    }
 }
 
 extension TemplateTransaction {

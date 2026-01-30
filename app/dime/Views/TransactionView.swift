@@ -35,6 +35,7 @@ struct TransactionView: View {
     @State private var repeatCoefficient = 1
     @State private var showRecurring = false
     @State var income = false
+    @State var paymentMethod: PaymentMethod = .cash
 
     var transactionTypeString: String {
         if income {
@@ -696,6 +697,34 @@ struct TransactionView: View {
                     }
                     .padding(.bottom, 5)
                 }
+                
+                // payment method picker
+                HStack(spacing: 8) {
+                    ForEach(PaymentMethod.allCases) { method in
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.15)) {
+                                paymentMethod = method
+                            }
+                        } label: {
+                            HStack(spacing: 5) {
+                                Image(systemName: method.icon)
+                                    .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                                Text(method.shortName)
+                                    .font(.system(.body, design: .rounded).weight(.semibold))
+                                    .lineLimit(1)
+                            }
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .foregroundColor(paymentMethod == method ? .white : Color.SubtitleText)
+                            .background(
+                                paymentMethod == method ? method.color : Color.SecondaryBackground,
+                                in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.bottom, 5)
 
                 // date and category picker
 
@@ -1033,6 +1062,7 @@ struct TransactionView: View {
                     editedTransaction.amount = price
                     editedTransaction.date = date
                     editedTransaction.income = income
+                    editedTransaction.paymentMethod = paymentMethod.rawValue
 
                     let calendar = Calendar(identifier: .gregorian)
 
@@ -1073,6 +1103,7 @@ struct TransactionView: View {
         }
 
         transaction.income = income
+        transaction.paymentMethod = paymentMethod.rawValue
 
         if let unwrappedCategory = category {
             transaction.category = unwrappedCategory
@@ -1117,6 +1148,7 @@ struct TransactionView: View {
             }
 
             _date = State(initialValue: transaction.date ?? Date.now)
+            _paymentMethod = State(initialValue: transaction.wrappedPaymentMethod)
         }
         self.toEdit = toEdit
     }

@@ -564,7 +564,7 @@ struct SettingsView: View {
 
     let fileName = "export.csv"
     let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
-    var csvText = "Date,Note,Amount,Category,Type\n"
+    var csvText = "Date,Note,Amount,Category,Type,PaymentMethod\n"
 
     for transaction in transactions {
       var string = transaction.wrappedNote
@@ -579,7 +579,7 @@ struct SettingsView: View {
       string.removeAll(where: { $0 == "," })
 
       csvText +=
-        "\(transaction.wrappedDate),\(string),\(String(format: "%.2f", transaction.wrappedAmount)),\(transaction.category?.wrappedName ?? ""),\(type)\n"
+        "\(transaction.wrappedDate),\(string),\(String(format: "%.2f", transaction.wrappedAmount)),\(transaction.category?.wrappedName ?? ""),\(type),\(transaction.wrappedPaymentMethod.name)\n"
     }
 
     do {
